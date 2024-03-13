@@ -6,21 +6,21 @@ from .models import Product, ProductVariant
 
 @api_view(['POST'])
 def bulk_insert_products(request):
-    data = request.data  # Assuming you send a list of dictionaries with product details
+    data = request.data  
 
     try:
-        # Bulk insert products
+        # This is where we bulk insert products
         products_to_create = [Product(name=item['name']) for item in data]
         created_products = Product.objects.bulk_create(products_to_create)
 
-        # Create a dictionary mapping product names to product instances
+        # We then create dictionary mapping product names to product instances
         product_instance_dict = {product.name: product for product in created_products}
 
-        # Now bulk insert product variants
+        # Now we bulk insert product variants
         variants_to_create = []
         for item in data:
             product_instance = product_instance_dict[item['name']]
-            variants = item.get('variants', [])  # Assuming variants are sent as a list
+            variants = item.get('variants', [])  
             for variant in variants:
                 variants_to_create.append(ProductVariant(product=product_instance, name=variant['name'], price=variant['price'], sku=variant.get('sku')))
 
